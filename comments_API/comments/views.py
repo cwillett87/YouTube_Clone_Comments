@@ -116,19 +116,19 @@ class CommentLike(APIView):
 
 class CommentDislike(APIView):
 
-    def get_object(self, pk, likes):
+    def get_object(self, video_id, pk):
         try:
-            return Comment.objects.get(pk=pk, likes=likes)
+            return Comment.objects.get(video_id=video_id, pk=pk)
         except Comment.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk):
-        comment = self.get_object(pk)
+    def get(self, request, video_id):
+        comment = self.get_object(video_id)
         serializer = CommentSerializer(comment)
         return Response(serializer.data)
 
-    def patch(self, request, pk, likes):
-        comment = self.get_object(pk, likes=likes)
+    def patch(self, request, video_id, pk):
+        comment = self.get_object(video_id, pk=pk)
         data = {"dislikes": comment.dislikes + int(1)}
         serializer = CommentSerializer(comment, data=data, partial=True)
         if serializer.is_valid():
