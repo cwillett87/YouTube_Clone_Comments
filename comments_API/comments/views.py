@@ -15,7 +15,7 @@ class ReplyList(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = CommentSerializer(data=request.data)
+        serializer = ReplySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -26,13 +26,13 @@ class ReplyDetail(APIView):
 
     def get_object(self, comment):
         try:
-            return Reply.objects.get( comment=comment)
+            return Reply.objects.filter(comment=comment)
         except Comment.DoesNotExist:
             raise Http404
 
     def get(self, request, comment):
         reply = self.get_object(comment)
-        serializer = ReplySerializer(reply)
+        serializer = ReplySerializer(reply, many=True)
         return Response(serializer.data)
 
     def put(self, request, comment):
